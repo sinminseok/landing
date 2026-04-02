@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThreadCleanFollow — Threads 맞팔 정리 도구</title>
+<meta name="description" content="맞팔이 아닌 Threads 계정을 한 번에 정리하세요.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:       #06060A;
+  --bg2:      #0A0A10;
+  --surface:  #0E0E16;
+  --surface2: #13131E;
+  --border:   rgba(255,255,255,0.06);
+  --border2:  rgba(255,255,255,0.11);
+  --text:     #EEEDf8;
+  --muted:    #6B6A80;
+  --muted2:   #9998B0;
+  --purple:   #7C3AED;
+  --purple2:  #9B5CF6;
+  --purple3:  #C084FC;
+  --indigo:   #4F46E5;
+  --glow:     rgba(124,58,237,0.35);
+  --glow2:    rgba(79,70,229,0.2);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── 글로벌 배경 오브 ── */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.orb1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%); top: -200px; left: 50%; transform: translateX(-50%); }
+.orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(79,70,229,0.12) 0%, transparent 70%); bottom: 20%; right: -100px; }
+.orb3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(192,132,252,0.08) 0%, transparent 70%); top: 60%; left: -80px; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 7%;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 66px;
+  background: rgba(6,6,10,0.8);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 15px; font-weight: 700; color: var(--text);
+  text-decoration: none; letter-spacing: -0.3px;
+}
+.nav-logo-icon {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--purple), var(--indigo));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 0 16px rgba(124,58,237,0.4);
+}
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--purple); color: white;
+  padding: 9px 22px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 0 20px rgba(124,58,237,0.3);
+}
+.nav-cta:hover { background: var(--purple2); box-shadow: 0 0 28px rgba(124,58,237,0.5); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 130px 7% 100px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* 배경 원형 글로우 (레퍼런스처럼) */
+.hero-orb-main {
+  position: absolute;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(124,58,237,0.22) 0%, rgba(79,70,229,0.1) 40%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: orbPulse 6s ease-in-out infinite;
+}
+@keyframes orbPulse {
+  0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%,-50%) scale(1.08); opacity: 0.8; }
+}
+
+/* 부유하는 태그들 */
+.float-tag {
+  position: absolute;
+  background: var(--purple);
+  color: white; font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: 6px;
+  pointer-events: none;
+  animation: floatTag 4s ease-in-out infinite;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+}
+.float-tag::before {
+  content: '';
+  position: absolute;
+  width: 6px; height: 6px;
+  background: white;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.ft1 { top: 28%; left: 8%; animation-delay: 0s; }
+.ft1::before { right: -6px; top: 50%; transform: translateY(-50%); }
+.ft2 { top: 22%; right: 10%; animation-delay: 1.2s; background: var(--indigo); box-shadow: 0 4px 20px rgba(79,70,229,0.4); }
+.ft2::before { left: -6px; top: 50%; transform: translateY(-50%) rotate(180deg); }
+.ft3 { bottom: 30%; left: 6%; animation-delay: 2s; background: #1D4ED8; box-shadow: 0 4px 20px rgba(29,78,216,0.4); }
+.ft3::before { right: -6px; top: 50%; transform: translateY(-50%); }
+.ft4 { bottom: 25%; right: 8%; animation-delay: 0.7s; }
+.ft4::before { left: -6px; top: 50%; transform: translateY(-50%) rotate(180deg); }
+@keyframes floatTag {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 커서 점 */
+.cursor-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--purple3);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.cd1 { top: 26%; left: 6%; }
+.cd2 { top: 20%; right: 8%; background: #60A5FA; }
+.cd3 { bottom: 28%; left: 4%; }
+.cd4 { bottom: 23%; right: 6%; background: #34D399; }
+
+.hero-content { position: relative; z-index: 1; max-width: 700px; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.25);
+  border-radius: 99px; padding: 7px 16px;
+  font-size: 12px; font-weight: 600; color: var(--purple3);
+  letter-spacing: 0.3px; margin-bottom: 32px;
+  animation: fadeUp 0.7s ease both;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--purple3);
+  animation: orbPulse 2s ease-in-out infinite;
+}
+
+.hero-title {
+  font-size: clamp(40px, 6.5vw, 72px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+.hero-title-small { display: block; font-weight: 400; color: var(--muted2); font-size: 0.65em; letter-spacing: -0.5px; margin-bottom: 4px; }
+.hero-title-main { display: block; }
+.hero-title-hl {
+  background: linear-gradient(135deg, var(--purple2), var(--purple3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-desc {
+  font-size: 17px; color: var(--muted2); line-height: 1.75;
+  margin-bottom: 44px; max-width: 520px; margin-left: auto; margin-right: auto;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+
+.hero-btns {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; flex-wrap: wrap;
+  animation: fadeUp 0.7s 0.3s ease both;
+}
+.btn-hero {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 30px; border-radius: 10px;
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: all 0.22s; letter-spacing: -0.2px;
+}
+.btn-hero-fill {
+  background: var(--purple);
+  color: white;
+  box-shadow: 0 0 30px rgba(124,58,237,0.4), 0 4px 15px rgba(0,0,0,0.3);
+}
+.btn-hero-fill:hover {
+  background: var(--purple2);
+  box-shadow: 0 0 40px rgba(124,58,237,0.6), 0 8px 25px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+.btn-hero-ghost {
+  background: var(--surface2);
+  color: var(--muted2);
+  border: 1px solid var(--border2);
+}
+.btn-hero-ghost:hover { color: var(--text); border-color: rgba(124,58,237,0.3); transform: translateY(-2px); }
+
+.hero-sub { margin-top: 22px; font-size: 12px; color: var(--muted); animation: fadeUp 0.7s 0.4s ease both; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); }
+
+/* ── HOW ── */
+.how-section { padding: 110px 7%; position: relative; z-index: 1; }
+.section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; color: var(--purple3); text-transform: uppercase; margin-bottom: 14px; }
+.section-title { font-size: clamp(28px, 4vw, 46px); font-weight: 800; letter-spacing: -1px; line-height: 1.15; margin-bottom: 14px; }
+.section-sub { font-size: 16px; color: var(--muted2); line-height: 1.7; }
+
+.how-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-top: 64px;
+  background: var(--border);
+  border: 1px solid var(--border); border-radius: 18px; overflow: hidden;
+}
+.how-card {
+  background: var(--surface);
+  padding: 40px 36px;
+  transition: background 0.2s;
+  position: relative;
+}
+.how-card:hover { background: var(--surface2); }
+.how-card::after {
+  content: attr(data-num);
+  position: absolute; bottom: 20px; right: 24px;
+  font-size: 72px; font-weight: 800;
+  color: rgba(124,58,237,0.06);
+  line-height: 1; letter-spacing: -2px;
+  pointer-events: none;
+}
+.how-icon {
+  width: 44px; height: 44px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 20px;
+  transition: all 0.2s;
+}
+.how-card:hover .how-icon { background: rgba(124,58,237,0.25); box-shadow: 0 0 20px rgba(124,58,237,0.2); }
+.how-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.how-desc { font-size: 14px; color: var(--muted2); line-height: 1.65; }
+
+/* ── FEATURES ── */
+.feat-section { padding: 110px 7%; background: var(--bg2); position: relative; z-index: 1; }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 64px; }
+.feat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 30px 28px;
+  transition: all 0.25s; position: relative; overflow: hidden;
+}
+.feat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,0.5), transparent);
+  transform: scaleX(0); transform-origin: center; transition: transform 0.4s;
+}
+.feat-card:hover { border-color: rgba(124,58,237,0.25); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(124,58,237,0.07); }
+.feat-card:hover::before { transform: scaleX(1); }
+.feat-icon { font-size: 26px; margin-bottom: 16px; }
+.feat-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.feat-desc { font-size: 13px; color: var(--muted2); line-height: 1.65; }
+.feat-badge { display: inline-block; margin-top: 14px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: var(--purple3); background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); padding: 3px 9px; border-radius: 4px; }
+
+/* ── PRICING ── */
+.price-section { padding: 110px 7%; position: relative; z-index: 1; }
+.price-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 740px; margin: 64px auto 0; }
+.price-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px; padding: 38px 36px;
+  position: relative; transition: all 0.25s;
+}
+.price-card:hover { transform: translateY(-5px); }
+.price-card.hot {
+  border-color: rgba(124,58,237,0.4);
+  background: linear-gradient(160deg, rgba(124,58,237,0.08) 0%, var(--surface) 50%);
+  box-shadow: 0 0 40px rgba(124,58,237,0.1);
+}
+.price-plan { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.price-card.hot .price-plan { color: var(--purple3); }
+.price-amount { font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; }
+.price-period { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.price-line { height: 1px; background: var(--border); margin-bottom: 24px; }
+.price-list { list-style: none; margin-bottom: 34px; }
+.price-list li { display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 7px 0; color: var(--muted2); }
+.price-list li.y { color: var(--text); }
+.price-list li::before { content: '·'; color: var(--border2); font-size: 18px; flex-shrink: 0; line-height: 1; }
+.price-list li.y::before { content: '✓'; color: var(--purple3); font-size: 13px; }
+.btn-price {
+  display: block; width: 100%; text-align: center;
+  padding: 13px; border-radius: 10px;
+  font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.2s;
+}
+.btn-price.free { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+.btn-price.free:hover { background: var(--border2); }
+.btn-price.pro { background: var(--purple); color: white; box-shadow: 0 0 24px rgba(124,58,237,0.35); }
+.btn-price.pro:hover { background: var(--purple2); box-shadow: 0 0 36px rgba(124,58,237,0.5); transform: translateY(-1px); }
+.hot-badge {
+  position: absolute; top: -13px; right: 28px;
+  background: linear-gradient(135deg, var(--purple), var(--purple2));
+  color: white; font-size: 10px; font-weight: 800; letter-spacing: 1px;
+  padding: 4px 14px; border-radius: 99px; text-transform: uppercase;
+  box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+}
+
+/* ── FAQ ── */
+.faq-section { padding: 110px 7%; background: var(--bg2); position: relative; z-index: 1; }
+.faq-list { max-width: 620px; margin-top: 64px; }
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 26px 0; cursor: pointer;
+}
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 15px; font-weight: 600; gap: 16px;
+  transition: color 0.2s;
+}
+.faq-q:hover { color: var(--purple3); }
+.faq-toggle {
+  width: 24px; height: 24px; flex-shrink: 0;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 300; color: var(--muted2);
+  transition: all 0.2s;
+}
+.faq-item.open .faq-toggle { background: var(--purple); border-color: var(--purple); color: white; content: '−'; }
+.faq-a {
+  font-size: 14px; color: var(--muted2); line-height: 1.75;
+  max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease;
+}
+.faq-item.open .faq-a { max-height: 200px; padding-top: 14px; }
+
+/* ── CTA ── */
+.cta-section {
+  padding: 130px 7%; text-align: center;
+  position: relative; overflow: hidden; z-index: 1;
+}
+.cta-orb {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(124,58,237,0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-title { font-size: clamp(32px, 5vw, 56px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 20px; position: relative; }
+.cta-desc { font-size: 17px; color: var(--muted2); margin-bottom: 40px; position: relative; }
+.cta-btns { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; position: relative; }
+.cta-sub { margin-top: 20px; font-size: 12px; color: var(--muted); position: relative; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 36px 7%;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  border-top: 1px solid var(--border);
+  position: relative; z-index: 1;
+}
+.footer-logo { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.footer-logo-icon { width: 22px; height: 22px; background: linear-gradient(135deg, var(--purple), var(--indigo)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.footer-links { display: flex; gap: 28px; }
+.footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text); }
+.footer-copy { font-size: 12px; color: var(--muted); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(22px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.reveal { opacity:0; transform:translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.d1{transition-delay:0.1s;} .d2{transition-delay:0.2s;} .d3{transition-delay:0.3s;}
+
+@media(max-width:900px){
+  .how-grid,.feat-grid,.price-grid { grid-template-columns:1fr; }
+  .float-tag,.cursor-dot { display:none; }
+  nav { padding:0 5%; }
+  .how-section,.feat-section,.price-section,.faq-section,.cta-section { padding:80px 5%; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">✨</div>
+    ThreadCleanFollow
+  </a>
+  <div class="nav-links">
+    <a href="#how">사용법</a>
+    <a href="#features">기능</a>
+    <a href="#pricing">가격</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <a href="#pricing" class="nav-cta">무료 시작</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb-main"></div>
+
+  <!-- 부유 태그 -->
+  <div class="cursor-dot cd1"></div>
+  <div class="float-tag ft1">Threads</div>
+  <div class="cursor-dot cd2"></div>
+  <div class="float-tag ft2">언팔로우</div>
+  <div class="cursor-dot cd3"></div>
+  <div class="float-tag ft3">팔로잉 관리</div>
+  <div class="cursor-dot cd4"></div>
+  <div class="float-tag ft4">맞팔 분석</div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-dot"></div>
+      Chrome 확장프로그램 · 무료 시작 가능
+    </div>
+    <h1 class="hero-title">
+      <span class="hero-title-small">Threads 팔로잉 정리를 위한 첫걸음</span>
+      <span class="hero-title-main">지금, <span class="hero-title-hl">ThreadCleanFollow</span>에서</span>
+    </h1>
+    <p class="hero-desc">
+      맞팔이 아닌 계정을 한 번에 스캔하고 정리하세요.<br>
+      설치 30초, 스캔 1분이면 깔끔한 팔로잉 완성.
+    </p>
+    <div class="hero-btns">
+      <a href="#pricing" class="btn-hero btn-hero-fill">✨ 무료로 시작하기</a>
+      <a href="#how" class="btn-hero btn-hero-ghost">사용법 보기 →</a>
+    </div>
+    <p class="hero-sub">신용카드 불필요 · Chrome 전용 · 브라우저 내 안전 처리</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="reveal">
+    <div class="section-eyebrow">사용 방법</div>
+    <h2 class="section-title">3단계면 끝.</h2>
+    <p class="section-sub">복잡한 설정 없이, 누구나 바로 시작할 수 있어요.</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-card reveal" data-num="01">
+      <div class="how-icon">🔧</div>
+      <div class="how-title">확장프로그램 설치</div>
+      <div class="how-desc">Chrome에서 ThreadCleanFollow를 설치하세요. 클릭 한 번으로 30초면 완료.</div>
+    </div>
+    <div class="how-card reveal d1" data-num="02">
+      <div class="how-icon">🔍</div>
+      <div class="how-title">Threads에서 스캔</div>
+      <div class="how-desc">threads.com에 접속 후 아이콘을 클릭하고 스캔 시작. 팔로잉·팔로워가 자동 분석돼요.</div>
+    </div>
+    <div class="how-card reveal d2" data-num="03">
+      <div class="how-icon">🗑</div>
+      <div class="how-title">선택 후 언팔로우</div>
+      <div class="how-desc">맞팔이 아닌 계정 목록에서 원하는 계정만 골라 한 번에 언팔로우하세요.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section class="feat-section" id="features">
+  <div class="reveal">
+    <div class="section-eyebrow">기능</div>
+    <h2 class="section-title">필요한 건 다 있어요.</h2>
+    <p class="section-sub">스마트한 기능들로 Threads를 깔끔하게 관리하세요.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card reveal">
+      <div class="feat-icon">🔍</div>
+      <div class="feat-title">맞팔 자동 스캔</div>
+      <div class="feat-desc">팔로잉과 팔로워를 자동 비교해 맞팔이 아닌 계정을 즉시 찾아드려요.</div>
+    </div>
+    <div class="feat-card reveal d1">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">안전한 딜레이</div>
+      <div class="feat-desc">계정 제한을 방지하기 위해 각 언팔로우 사이에 자동 딜레이가 적용돼요.</div>
+    </div>
+    <div class="feat-card reveal d2">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">브라우저 내 처리</div>
+      <div class="feat-desc">모든 데이터는 내 브라우저 안에서만 처리돼요. 외부 서버로 절대 전송되지 않아요.</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">✅</div>
+      <div class="feat-title">전체 선택/해제</div>
+      <div class="feat-desc">맞팔 아닌 계정 전체를 한 번에 선택하거나 개별로 선택할 수 있어요.</div>
+      <span class="feat-badge">PRO</span>
+    </div>
+    <div class="feat-card reveal d1">
+      <div class="feat-icon">♾️</div>
+      <div class="feat-title">무제한 언팔로우</div>
+      <div class="feat-desc">하루 20명 제한 없이 원하는 만큼 언팔로우할 수 있어요.</div>
+      <span class="feat-badge">PRO</span>
+    </div>
+    <div class="feat-card reveal d2">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">실시간 통계</div>
+      <div class="feat-desc">팔로잉, 팔로워, 맞팔 아닌 계정 수를 사이드패널에서 한눈에 확인해요.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRICING -->
+<section class="price-section" id="pricing">
+  <div class="reveal" style="text-align:center">
+    <div class="section-eyebrow">가격</div>
+    <h2 class="section-title">심플한 가격.</h2>
+    <p class="section-sub" style="margin:0 auto">숨겨진 비용 없이, 필요한 만큼만 쓰세요.</p>
+  </div>
+  <div class="price-grid">
+    <div class="price-card reveal">
+      <div class="price-plan">Free</div>
+      <div class="price-amount">$0</div>
+      <div class="price-period">영원히 무료</div>
+      <div class="price-line"></div>
+      <ul class="price-list">
+        <li class="y">맞팔 스캔 무제한</li>
+        <li class="y">하루 20명 언팔로우</li>
+        <li class="y">실시간 통계</li>
+        <li>전체 선택/언팔로우</li>
+        <li>무제한 언팔로우</li>
+      </ul>
+      <a href="#" class="btn-price free">무료로 시작</a>
+    </div>
+    <div class="price-card hot reveal d1">
+      <div class="hot-badge">인기</div>
+      <div class="price-plan">Pro</div>
+      <div class="price-amount">$2.9</div>
+      <div class="price-period">/ 월 &nbsp;·&nbsp; 또는 $23 평생 이용</div>
+      <div class="price-line"></div>
+      <ul class="price-list">
+        <li class="y">맞팔 스캔 무제한</li>
+        <li class="y">무제한 언팔로우</li>
+        <li class="y">전체 선택/언팔로우</li>
+        <li class="y">실시간 통계</li>
+        <li class="y">이메일 우선 지원</li>
+      </ul>
+      <a href="#" class="btn-price pro">Pro 시작하기 →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="reveal">
+    <div class="section-eyebrow">FAQ</div>
+    <h2 class="section-title">자주 묻는 질문.</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <div class="faq-q">내 Threads 계정이 안전한가요? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">네. 모든 처리는 내 브라우저 안에서만 이루어지며, 어떤 데이터도 외부 서버로 전송되지 않아요. 로그인 정보도 저장하지 않아요.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">무료 버전의 제한은 무엇인가요? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">무료 버전은 하루 20명까지 언팔로우할 수 있어요. 스캔은 무제한으로 가능하고, 맞팔 아닌 계정 목록도 전부 볼 수 있어요.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">결제 후 어떻게 Pro가 활성화되나요? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">결제 완료 후 이메일로 라이선스 키가 전송돼요. 확장프로그램 하단의 "이미 키가 있으신가요?"를 클릭해 키를 입력하면 즉시 Pro가 활성화돼요.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">언팔로우하면 상대방에게 알림이 가나요? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">Threads는 언팔로우 알림을 보내지 않아요. 상대방은 직접 확인하지 않는 이상 알 수 없어요.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">구독 취소는 어떻게 하나요? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">LemonSqueezy 고객 포털에서 언제든 취소할 수 있어요. 취소 후 현재 기간이 끝나면 자동으로 무료 플랜으로 전환돼요.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-orb"></div>
+  <h2 class="cta-title reveal">지금 바로<br><span style="background:linear-gradient(135deg,var(--purple2),var(--purple3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">정리 시작.</span></h2>
+  <p class="cta-desc reveal">무료로 설치하고, 맞팔 아닌 계정을 한눈에 확인하세요.</p>
+  <div class="cta-btns reveal">
+    <a href="#pricing" class="btn-hero btn-hero-fill">✨ 무료로 시작하기</a>
+  </div>
+  <p class="cta-sub reveal">신용카드 불필요 · 설치 30초 · Chrome 전용</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <div class="footer-logo-icon">✨</div>
+    ThreadCleanFollow
+  </div>
+  <div class="footer-links">
+    <a href="#">개인정보처리방침</a>
+    <a href="#">이용약관</a>
+    <a href="mailto:support@threadcleanfollow.com">문의</a>
+  </div>
+  <div class="footer-copy">© 2026 ThreadCleanFollow. All rights reserved.</div>
+</footer>
+
+<script>
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// FAQ 토글
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => {
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-toggle').textContent = '+';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      item.querySelector('.faq-toggle').textContent = '−';
+    }
+  });
+});
+</script>
+</body>
+</html>
