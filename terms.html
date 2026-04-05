@@ -14,6 +14,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -ap
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 7%; display: flex; align-items: center; justify-content: space-between; height: 66px; background: rgba(6,6,10,0.8); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
 .nav-logo { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 700; color: var(--text); text-decoration: none; }
 .nav-logo-icon { width: 28px; height: 28px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--bg); }
+.lang-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--muted2); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.lang-btn:hover { color: var(--text); border-color: rgba(124,58,237,0.3); }
 .content { max-width: 720px; margin: 0 auto; padding: 120px 24px 80px; }
 h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
 .updated { font-size: 13px; color: var(--muted); margin-bottom: 48px; }
@@ -23,6 +25,8 @@ ul { padding-left: 20px; margin-bottom: 16px; }
 li { margin-bottom: 6px; }
 a { color: var(--purple3); }
 strong { color: var(--text); }
+.lang-content { display: none; }
+.lang-content.active { display: block; }
 footer { padding: 36px 7%; display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; border-top: 1px solid var(--border); }
 footer a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
 footer a:hover { color: var(--text); }
@@ -31,8 +35,12 @@ footer a:hover { color: var(--text); }
 <body>
 <nav>
   <a href="index.html" class="nav-logo"><div class="nav-logo-icon">SAU</div> Following Manager</a>
+  <button class="lang-btn" id="langToggle">KO</button>
 </nav>
+
 <div class="content">
+<!-- English -->
+<div class="lang-content active" id="content-en">
   <h1>Terms of Service</h1>
   <p class="updated">Last updated: April 5, 2026</p>
 
@@ -124,11 +132,123 @@ footer a:hover { color: var(--text); }
   <p>If you have any questions about these Terms of Service, please contact us at:<br>
   <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a></p>
 </div>
+
+<!-- Korean -->
+<div class="lang-content" id="content-ko">
+  <h1>이용약관</h1>
+  <p class="updated">최종 수정: 2026년 4월 5일</p>
+
+  <h2>1. 서비스 개요</h2>
+  <p>Following Manager for Instagram & Threads(이하 "서비스")는 Instagram 및 Threads 플랫폼에서 팔로잉·팔로워 목록을 분석하여 맞팔이 아닌 계정을 식별하고, 사용자가 선택적으로 팔로잉 목록을 관리할 수 있도록 돕는 Chrome 브라우저 확장프로그램입니다. 서비스는 Meta Platforms, Inc., Instagram, Threads와 제휴, 보증, 후원 관계가 아닙니다.</p>
+
+  <h2>2. 약관 동의</h2>
+  <p>서비스를 설치, 접속 또는 이용함으로써 본 이용약관에 동의하는 것으로 간주됩니다. 본 약관에 동의하지 않는 경우 서비스를 이용하지 마십시오.</p>
+
+  <h2>3. 이용 자격</h2>
+  <ul>
+    <li>서비스를 이용하려면 만 13세 이상(또는 해당 관할권에서 요구하는 최소 연령 이상)이어야 합니다.</li>
+    <li>서비스의 기능을 이용하려면 유효한 Instagram 또는 Threads 계정이 필요합니다.</li>
+    <li>서비스 이용 시 Instagram 및 Threads의 이용약관과 커뮤니티 가이드라인을 준수해야 합니다.</li>
+  </ul>
+
+  <h2>4. 서비스 설명</h2>
+  <p>서비스는 다음과 같은 기능을 제공합니다:</p>
+  <ul>
+    <li><strong>맞팔 분석:</strong> 팔로잉·팔로워 목록을 스캔하여 맞팔이 아닌 계정을 식별합니다.</li>
+    <li><strong>선택적 팔로잉 관리:</strong> 맞팔이 아닌 계정을 검토하고, 안전 딜레이가 적용된 상태에서 한 명씩 선택적으로 팔로잉 목록에서 제거할 수 있습니다.</li>
+    <li><strong>화이트리스트 보호:</strong> 특정 계정을 화이트리스트에 추가하여 정리 대상에서 보호할 수 있습니다.</li>
+    <li><strong>계정 안전 기능:</strong> 스마트 딜레이, 배치 쿨다운, 속도 제한 감지 등을 통해 계정을 보호합니다.</li>
+  </ul>
+
+  <h2>5. 허용되는 이용</h2>
+  <p>다음과 같은 목적으로 서비스를 이용해서는 안 됩니다:</p>
+  <ul>
+    <li>스팸, 괴롭힘 또는 플랫폼 악용 행위.</li>
+    <li>수치를 인위적으로 부풀리기 위한 반복적 대량 팔로우/언팔로우 행위.</li>
+    <li>Instagram 또는 Threads의 이용약관을 위반하는 행위.</li>
+    <li>불법 또는 무단 목적의 이용.</li>
+  </ul>
+
+  <h2>6. 계정 안전 면책 조항</h2>
+  <p>서비스는 자동 딜레이, 배치 처리 쿨다운, 속도 제한 감지 등의 안전 기능을 내장하고 있습니다. 그러나 <strong>이러한 조치가 Instagram 또는 Threads에서 계정에 대한 제한, 정지 또는 기타 조치가 발생하지 않음을 보장하지 않습니다.</strong></p>
+  <p>Instagram과 Threads는 사전 고지 없이 정책, 속도 제한 또는 집행 방식을 변경할 수 있습니다. 이용자는 다음을 인정합니다:</p>
+  <ul>
+    <li>이용자는 자신의 위험 부담과 판단 하에 서비스를 이용합니다.</li>
+    <li>서비스 운영자는 Instagram 또는 Threads에서 계정에 대해 취하는 제한, 정지, 차단 등 불이익에 대해 책임지지 않습니다.</li>
+    <li>이용자는 서비스 이용 결과에 대해 스스로 책임집니다.</li>
+  </ul>
+
+  <h2>7. 유료 구독 (Pro 플랜)</h2>
+  <p>서비스는 추가 기능을 갖춘 유료 구독 플랜("Pro")을 제공합니다:</p>
+  <ul>
+    <li>Pro 구독은 공인된 결제 처리 업체를 통해 처리됩니다.</li>
+    <li><strong>월간 플랜:</strong> $3.99/월, 매월 청구.</li>
+    <li><strong>연간 플랜:</strong> $30/년, 매년 청구.</li>
+    <li>월간 구독은 매 청구 주기마다 자동 갱신됩니다. 결제 처리 업체의 고객 포털에서 언제든 해지할 수 있습니다.</li>
+    <li>해지 시 현재 결제 기간이 종료될 때까지 Pro 이용이 유지되며, 이후 무료 플랜으로 전환됩니다.</li>
+  </ul>
+
+  <h2>8. 환불 정책</h2>
+  <p>서비스에 만족하실 수 있도록 다음과 같은 환불 정책을 운영합니다:</p>
+  <ul>
+    <li><strong>14일 환불 보장:</strong> Pro 플랜에 만족하지 못하시면, 최초 구매 후 14일 이내에 전액 환불을 요청할 수 있습니다. 사유를 묻지 않습니다.</li>
+    <li><strong>14일 이후:</strong> 환불 요청은 건별로 검토됩니다. 서비스가 버그나 기술적 문제로 정상 작동하지 않는 경우 비례 환불이 가능합니다.</li>
+    <li><strong>갱신 환불:</strong> 자동 갱신 요금에 대한 환불 요청은 갱신일로부터 7일 이내에 제출해야 합니다.</li>
+    <li><strong>환불 요청 방법:</strong> 라이선스 키와 환불 사유를 포함하여 <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a>으로 연락해 주세요. 환불은 보통 5-10 영업일 내에 처리됩니다.</li>
+    <li>환불은 구매 시 사용한 결제 수단으로 이루어집니다.</li>
+  </ul>
+  <p>자세한 내용은 <a href="refund.html">환불 정책</a>을 참조하세요.</p>
+
+  <h2>9. 지적 재산권</h2>
+  <p>서비스의 소프트웨어, 디자인, 콘텐츠에 대한 저작권 및 지적재산권은 서비스 운영자에게 있습니다. 이용자는 개인적, 비상업적 용도로만 서비스를 사용할 수 있으며, 역공학, 복제, 수정, 재배포를 해서는 안 됩니다.</p>
+
+  <h2>10. 보증의 부인</h2>
+  <p>서비스는 명시적이든 묵시적이든 어떠한 종류의 보증 없이 "있는 그대로(AS IS)" 및 "이용 가능한 상태(AS AVAILABLE)"로 제공됩니다. 이에는 다음이 포함됩니다:</p>
+  <ul>
+    <li>서비스의 중단 없는 운영 또는 오류 없는 동작.</li>
+    <li>Instagram 또는 Threads 플랫폼, API 또는 정책의 향후 변경과의 호환성.</li>
+    <li>특정 목적에 대한 적합성 또는 상품성.</li>
+  </ul>
+
+  <h2>11. 책임 제한</h2>
+  <p>관련 법률이 허용하는 최대 범위 내에서, 서비스 운영자는 서비스 이용으로 인해 발생하는 직접적, 간접적, 부수적, 특별, 결과적 또는 징벌적 손해에 대해 책임을 지지 않습니다. 서비스 운영자의 최대 배상 책임은 청구일 이전 12개월 동안 이용자가 서비스에 지불한 금액을 초과하지 않습니다.</p>
+
+  <h2>12. 서비스 변경 및 종료</h2>
+  <p>서비스 운영자는 사전 고지 유무와 관계없이 서비스의 전부 또는 일부를 변경, 중단 또는 종료할 수 있습니다. 중대한 변경이나 종료 시 합리적인 사전 고지를 위해 노력합니다.</p>
+
+  <h2>13. 약관 변경</h2>
+  <p>본 이용약관은 수시로 업데이트될 수 있습니다. 변경 사항은 "최종 수정" 날짜가 업데이트된 본 페이지에 게시됩니다. 변경 후 서비스를 계속 이용하면 변경된 약관에 동의한 것으로 간주됩니다.</p>
+
+  <h2>14. 준거법</h2>
+  <p>본 약관은 대한민국 법률에 따라 해석되며, 본 약관과 관련된 분쟁은 서울중앙지방법원을 제1심 관할법원으로 합니다.</p>
+
+  <h2>15. 문의</h2>
+  <p>본 이용약관에 관한 문의사항은 아래로 연락해 주세요:<br>
+  <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a></p>
+</div>
+</div>
+
 <footer>
-  <a href="index.html">Home</a>
-  <a href="privacy.html">Privacy Policy</a>
-  <a href="refund.html">Refund Policy</a>
-  <a href="mailto:simmim1768@gmail.com">Contact</a>
+  <a href="index.html" id="footHome">Home</a>
+  <a href="privacy.html" id="footPrivacy">Privacy Policy</a>
+  <a href="refund.html" id="footRefund">Refund Policy</a>
+  <a href="mailto:simmim1768@gmail.com" id="footContact">Contact</a>
 </footer>
+
+<script>
+let lang = 'en';
+const toggle = document.getElementById('langToggle');
+toggle.addEventListener('click', () => {
+  lang = lang === 'en' ? 'ko' : 'en';
+  document.getElementById('content-en').classList.toggle('active', lang === 'en');
+  document.getElementById('content-ko').classList.toggle('active', lang === 'ko');
+  toggle.textContent = lang === 'en' ? 'KO' : 'EN';
+  document.documentElement.lang = lang;
+  document.getElementById('footHome').textContent = lang === 'ko' ? '홈' : 'Home';
+  document.getElementById('footPrivacy').textContent = lang === 'ko' ? '개인정보처리방침' : 'Privacy Policy';
+  document.getElementById('footRefund').textContent = lang === 'ko' ? '환불 정책' : 'Refund Policy';
+  document.getElementById('footContact').textContent = lang === 'ko' ? '문의' : 'Contact';
+});
+</script>
 </body>
 </html>

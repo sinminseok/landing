@@ -14,6 +14,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -ap
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 7%; display: flex; align-items: center; justify-content: space-between; height: 66px; background: rgba(6,6,10,0.8); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
 .nav-logo { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 700; color: var(--text); text-decoration: none; }
 .nav-logo-icon { width: 28px; height: 28px; background: var(--text); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--bg); }
+.lang-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--muted2); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.lang-btn:hover { color: var(--text); border-color: rgba(124,58,237,0.3); }
 .content { max-width: 720px; margin: 0 auto; padding: 120px 24px 80px; }
 h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
 .updated { font-size: 13px; color: var(--muted); margin-bottom: 48px; }
@@ -25,6 +27,8 @@ a { color: var(--purple3); }
 strong { color: var(--text); }
 .highlight-box { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 12px; padding: 24px; margin: 24px 0; }
 .highlight-box p { margin-bottom: 0; }
+.lang-content { display: none; }
+.lang-content.active { display: block; }
 footer { padding: 36px 7%; display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; border-top: 1px solid var(--border); }
 footer a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
 footer a:hover { color: var(--text); }
@@ -33,8 +37,12 @@ footer a:hover { color: var(--text); }
 <body>
 <nav>
   <a href="index.html" class="nav-logo"><div class="nav-logo-icon">SAU</div> Following Manager</a>
+  <button class="lang-btn" id="langToggle">KO</button>
 </nav>
+
 <div class="content">
+<!-- English -->
+<div class="lang-content active" id="content-en">
   <h1>Refund Policy</h1>
   <p class="updated">Last updated: April 5, 2026</p>
 
@@ -94,11 +102,91 @@ footer a:hover { color: var(--text); }
   <p>If you have any questions about our refund policy, please contact us at:<br>
   <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a></p>
 </div>
+
+<!-- Korean -->
+<div class="lang-content" id="content-ko">
+  <h1>환불 정책</h1>
+  <p class="updated">최종 수정: 2026년 4월 5일</p>
+
+  <div class="highlight-box">
+    <p><strong>모든 Pro 구독에 14일 환불 보장을 제공합니다.</strong> 만족하지 못하시면 14일 이내에 이메일을 보내주세요. 전액 환불해 드리며, 사유를 묻지 않습니다.</p>
+  </div>
+
+  <h2>1. 14일 환불 보장</h2>
+  <p>안심하고 구매하실 수 있도록 합니다. 어떤 이유로든 Pro 플랜에 만족하지 못하시면, 최초 구매일로부터 <strong>14일 이내</strong>에 전액 환불을 요청할 수 있습니다.</p>
+  <ul>
+    <li>사유를 묻지 않습니다 — 연락 주시면 환불을 처리해 드립니다.</li>
+    <li>월간 및 연간 구독 플랜 모두에 적용됩니다.</li>
+    <li>환불은 원래 결제 수단으로 이루어집니다.</li>
+  </ul>
+
+  <h2>2. 14일 이후</h2>
+  <p>최초 14일이 경과한 후의 환불 요청은 건별로 검토됩니다. 다음과 같은 상황에서 전액 또는 비례 환불이 가능합니다:</p>
+  <ul>
+    <li><strong>기술적 문제:</strong> 서비스 측의 버그나 기술적 문제로 인해 설명된 대로 작동하지 않고, 적시에 해결할 수 없는 경우.</li>
+    <li><strong>서비스 중단:</strong> 서비스를 영구적으로 중단하는 경우, 활성 구독자는 미사용 구독 기간에 대한 비례 환불을 받습니다.</li>
+    <li><strong>중복 청구:</strong> 실수로 두 번 이상 청구된 경우, 중복 청구분을 즉시 환불합니다.</li>
+  </ul>
+
+  <h2>3. 자동 갱신 환불</h2>
+  <p>자동 갱신 전 해지를 잊으신 경우:</p>
+  <ul>
+    <li>갱신일로부터 <strong>7일 이내</strong>에 갱신 요금에 대한 환불을 요청할 수 있습니다.</li>
+    <li>향후 청구를 방지하려면 결제 처리 업체의 고객 포털 또는 확장프로그램 내에서 다음 청구일 전에 구독을 해지하세요.</li>
+  </ul>
+
+  <h2>4. 환불 불가 사유</h2>
+  <p>다음의 경우에는 일반적으로 환불이 이루어지지 않습니다:</p>
+  <ul>
+    <li>해당 환불 기간(최초 구매 14일, 갱신 7일) 이후의 요청.</li>
+    <li>Instagram 또는 Threads가 이용자의 계정에 대해 취한 제한이나 조치. 서비스에는 안전 기능이 포함되어 있으나, 플랫폼 정책 변경과의 호환성을 보장할 수 없습니다. 자세한 내용은 <a href="terms.html">이용약관</a>을 참조하세요.</li>
+    <li>이용약관 위반.</li>
+    <li>환불 기간 이후 단순 변심 (적격한 기술적 문제가 동반되지 않는 경우).</li>
+  </ul>
+
+  <h2>5. 환불 요청 방법</h2>
+  <p>환불을 요청하시려면 다음 절차를 따라 주세요:</p>
+  <ul>
+    <li>제목에 "환불 요청"을 포함하여 <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a>으로 이메일을 보내주세요.</li>
+    <li><strong>라이선스 키</strong>와 구매 시 사용한 <strong>이메일 주소</strong>를 포함해 주세요.</li>
+    <li>환불 사유를 간략히 기재해 주세요 (14일 이후 요청의 경우).</li>
+  </ul>
+  <p>모든 환불 요청에 대해 <strong>2영업일 이내</strong>에 답변드리겠습니다. 승인된 환불은 결제 업체에 따라 보통 <strong>5-10영업일 이내</strong>에 처리됩니다.</p>
+
+  <h2>6. 해지 vs 환불</h2>
+  <p>해지와 환불의 차이를 참고해 주세요:</p>
+  <ul>
+    <li><strong>해지:</strong> 향후 청구를 중단합니다. 현재 결제 기간이 끝날 때까지 Pro 이용이 유지됩니다. 결제 처리 업체의 고객 포털 또는 확장프로그램에서 언제든 해지할 수 있습니다.</li>
+    <li><strong>환불:</strong> 결제 금액을 반환합니다. 환불 승인 시 Pro 이용이 즉시 해제됩니다.</li>
+  </ul>
+
+  <h2>7. 문의</h2>
+  <p>환불 정책에 관한 문의사항은 아래로 연락해 주세요:<br>
+  <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a></p>
+</div>
+</div>
+
 <footer>
-  <a href="index.html">Home</a>
-  <a href="terms.html">Terms of Service</a>
-  <a href="privacy.html">Privacy Policy</a>
-  <a href="mailto:simmim1768@gmail.com">Contact</a>
+  <a href="index.html" id="footHome">Home</a>
+  <a href="terms.html" id="footTerms">Terms of Service</a>
+  <a href="privacy.html" id="footPrivacy">Privacy Policy</a>
+  <a href="mailto:simmim1768@gmail.com" id="footContact">Contact</a>
 </footer>
+
+<script>
+let lang = 'en';
+const toggle = document.getElementById('langToggle');
+toggle.addEventListener('click', () => {
+  lang = lang === 'en' ? 'ko' : 'en';
+  document.getElementById('content-en').classList.toggle('active', lang === 'en');
+  document.getElementById('content-ko').classList.toggle('active', lang === 'ko');
+  toggle.textContent = lang === 'en' ? 'KO' : 'EN';
+  document.documentElement.lang = lang;
+  document.getElementById('footHome').textContent = lang === 'ko' ? '홈' : 'Home';
+  document.getElementById('footTerms').textContent = lang === 'ko' ? '이용약관' : 'Terms of Service';
+  document.getElementById('footPrivacy').textContent = lang === 'ko' ? '개인정보처리방침' : 'Privacy Policy';
+  document.getElementById('footContact').textContent = lang === 'ko' ? '문의' : 'Contact';
+});
+</script>
 </body>
 </html>
