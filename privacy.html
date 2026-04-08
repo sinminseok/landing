@@ -234,10 +234,7 @@ footer a:hover { color: var(--text); }
 </div>
 
 <footer>
-  <a href="index.html" id="footHome">Home</a>
-  <a href="terms.html" id="footTerms">Terms of Service</a>
-  <a href="refund.html" id="footRefund">Refund Policy</a>
-  <a href="mailto:simmim1768@gmail.com" id="footContact">Contact</a>
+  <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a>
 </footer>
 
 <script>
@@ -249,10 +246,6 @@ toggle.addEventListener('click', () => {
   document.getElementById('content-ko').classList.toggle('active', lang === 'ko');
   toggle.textContent = lang === 'en' ? 'KO' : 'EN';
   document.documentElement.lang = lang;
-  document.getElementById('footHome').textContent = lang === 'ko' ? '홈' : 'Home';
-  document.getElementById('footTerms').textContent = lang === 'ko' ? '이용약관' : 'Terms of Service';
-  document.getElementById('footRefund').textContent = lang === 'ko' ? '환불 정책' : 'Refund Policy';
-  document.getElementById('footContact').textContent = lang === 'ko' ? '문의' : 'Contact';
 });
 </script>
 </body>

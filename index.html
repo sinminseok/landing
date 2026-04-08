@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Instagram/Threads Safe Auto Unfollow — Automatically unfollow non-mutual accounts safely</title>
-<meta name="description" content="No login required. 100% local. Automatically find and unfollow non-mutual accounts on Instagram and Threads with built-in safety delays.">
+<title>Instagram Safe Auto Unfollow — Automatically unfollow non-mutual accounts safely</title>
+<meta name="description" content="No login required. 100% local. Automatically find and unfollow non-mutual accounts on Instagram with real browser sessions and human-like behavior patterns.">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
@@ -26,6 +26,10 @@
   --indigo:   #4F46E5;
   --green:    #22C55E;
   --green-soft: rgba(34,197,94,0.1);
+  --red:      #EF4444;
+  --red-soft: rgba(239,68,68,0.1);
+  --amber:    #F59E0B;
+  --amber-soft: rgba(245,158,11,0.1);
 }
 
 html { scroll-behavior: smooth; }
@@ -107,7 +111,7 @@ nav {
   0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
   50% { transform: translate(-50%,-50%) scale(1.08); opacity: 0.8; }
 }
-.hero-content { position: relative; z-index: 1; flex-shrink: 0; max-width: 480px; }
+.hero-content { position: relative; z-index: 1; flex-shrink: 0; max-width: 520px; }
 .hero-badges {
   display: flex; gap: 8px; flex-wrap: wrap;
   margin-bottom: 28px;
@@ -131,7 +135,6 @@ nav {
   font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
 }
 .platform-badge.ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
-.platform-badge.th { background: var(--text); color: var(--bg); }
 
 .hero-title {
   font-size: clamp(30px, 4.2vw, 52px);
@@ -232,8 +235,93 @@ nav {
 .how-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
 .how-desc { font-size: 14px; color: var(--muted2); line-height: 1.65; }
 
+/* ── SAFETY TECH ── */
+.safety-section { padding: 110px 7%; background: var(--bg2); position: relative; z-index: 1; }
+.safety-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 64px; }
+.safety-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 32px 28px;
+  transition: all 0.25s; position: relative; overflow: hidden;
+}
+.safety-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34,197,94,0.5), transparent);
+  transform: scaleX(0); transform-origin: center; transition: transform 0.4s;
+}
+.safety-card:hover { border-color: rgba(34,197,94,0.25); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(34,197,94,0.05); }
+.safety-card:hover::before { transform: scaleX(1); }
+.safety-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.safety-icon-wrap {
+  width: 42px; height: 42px; flex-shrink: 0;
+  background: var(--green-soft); border: 1px solid rgba(34,197,94,0.15);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.safety-card-title { font-size: 15px; font-weight: 700; }
+.safety-card-desc { font-size: 13px; color: var(--muted2); line-height: 1.7; }
+.safety-card-tag {
+  display: inline-block; margin-top: 14px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  color: var(--green); background: var(--green-soft);
+  border: 1px solid rgba(34,197,94,0.2);
+  padding: 3px 9px; border-radius: 4px;
+}
+
+/* ── COMPARISON ── */
+.compare-section { padding: 110px 7%; position: relative; z-index: 1; }
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 64px; max-width: 900px; margin-left: auto; margin-right: auto; }
+.compare-card {
+  border-radius: 16px; padding: 36px 32px;
+  border: 1px solid var(--border);
+}
+.compare-card.others {
+  background: var(--surface);
+}
+.compare-card.ours {
+  background: linear-gradient(160deg, rgba(34,197,94,0.06) 0%, var(--surface) 50%);
+  border-color: rgba(34,197,94,0.25);
+  box-shadow: 0 0 40px rgba(34,197,94,0.05);
+}
+.compare-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+}
+.compare-card.others .compare-label { color: var(--muted); }
+.compare-card.ours .compare-label { color: var(--green); }
+.compare-list { list-style: none; }
+.compare-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; padding: 8px 0; line-height: 1.55;
+}
+.compare-list li::before { flex-shrink: 0; font-size: 13px; margin-top: 2px; }
+.compare-card.others .compare-list li { color: var(--muted2); }
+.compare-card.others .compare-list li::before { content: '\2717'; color: var(--red); }
+.compare-card.ours .compare-list li { color: var(--text); }
+.compare-card.ours .compare-list li::before { content: '\2713'; color: var(--green); }
+
+/* ── TRADEOFF ── */
+.tradeoff-section { padding: 80px 7%; background: var(--bg2); position: relative; z-index: 1; }
+.tradeoff-wrap {
+  max-width: 800px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; padding: 48px 44px;
+  text-align: center;
+}
+.tradeoff-icon { font-size: 40px; margin-bottom: 18px; }
+.tradeoff-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 14px; }
+.tradeoff-desc { font-size: 15px; color: var(--muted2); line-height: 1.75; max-width: 600px; margin: 0 auto; }
+.tradeoff-items { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+.tradeoff-item {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 20px 24px; flex: 1; min-width: 200px; max-width: 320px; text-align: left;
+}
+.tradeoff-item-label { font-size: 12px; font-weight: 700; color: var(--amber); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.tradeoff-item-text { font-size: 13px; color: var(--muted2); line-height: 1.6; }
+.tradeoff-item-text strong { color: var(--green); font-weight: 600; }
+
 /* ── FEATURES ── */
-.feat-section { padding: 110px 7%; background: var(--bg2); position: relative; z-index: 1; }
+.feat-section { padding: 110px 7%; position: relative; z-index: 1; }
 .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 64px; }
 .feat-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -253,7 +341,7 @@ nav {
 .feat-badge { display: inline-block; margin-top: 14px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: var(--purple3); background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); padding: 3px 9px; border-radius: 4px; }
 
 /* ── PRICING ── */
-.price-section { padding: 110px 7%; position: relative; z-index: 1; }
+.price-section { padding: 110px 7%; background: var(--bg2); position: relative; z-index: 1; }
 .price-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 740px; margin: 64px auto 0; }
 .price-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -301,7 +389,7 @@ nav {
 }
 
 /* ── FAQ ── */
-.faq-section { padding: 110px 7%; background: var(--bg2); position: relative; z-index: 1; }
+.faq-section { padding: 110px 7%; position: relative; z-index: 1; }
 .faq-section .reveal { text-align: center; }
 .faq-list { max-width: 620px; margin: 64px auto 0; }
 .faq-item { border-bottom: 1px solid var(--border); padding: 26px 0; cursor: pointer; }
@@ -321,7 +409,7 @@ nav {
   font-size: 14px; color: var(--muted2); line-height: 1.75; text-align: left;
   max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease;
 }
-.faq-item.open .faq-a { max-height: 200px; padding-top: 14px; }
+.faq-item.open .faq-a { max-height: 300px; padding-top: 14px; }
 
 /* ── CTA ── */
 .cta-section { padding: 130px 7%; text-align: center; position: relative; overflow: hidden; z-index: 1; }
@@ -365,11 +453,16 @@ footer {
   .hero-desc { margin-left: auto; margin-right: auto; }
   .hero-video-wrap { width: 100%; max-width: 400px; }
   .how-grid,.feat-grid,.price-grid { grid-template-columns:1fr; }
+  .safety-grid { grid-template-columns: 1fr; }
+  .compare-grid { grid-template-columns: 1fr; }
   nav { padding:0 5%; }
   .nav-links { display: none; }
-  .how-section,.feat-section,.price-section,.faq-section,.cta-section { padding:80px 5%; }
+  .how-section,.safety-section,.feat-section,.price-section,.faq-section,.cta-section,.compare-section,.tradeoff-section { padding:80px 5%; }
   .trust-bar { gap: 20px; }
   .trust-item { font-size: 12px; }
+  .tradeoff-wrap { padding: 32px 24px; }
+  .tradeoff-items { flex-direction: column; align-items: center; }
+  .tradeoff-item { max-width: 100%; }
 }
 </style>
 </head>
@@ -382,11 +475,12 @@ footer {
 <nav>
   <a href="#" class="nav-logo">
     <img class="nav-logo-icon" src="app-icon.png" alt="logo">
-    <span data-i18n="navName">Instagram/Threads Safe Auto Unfollow</span>
+    <span data-i18n="navName">Instagram Safe Auto Unfollow</span>
   </a>
   <div class="nav-right">
     <div class="nav-links">
       <a href="#how" data-i18n="navHow">How it works</a>
+      <a href="#safety" data-i18n="navSafety">Safety</a>
       <a href="#features" data-i18n="navFeatures">Features</a>
       <a href="#pricing" data-i18n="navPricing">Pricing</a>
       <a href="#faq">FAQ</a>
@@ -403,7 +497,6 @@ footer {
   <div class="hero-content">
     <div class="platform-badges">
       <span class="platform-badge ig">Instagram</span>
-      <span class="platform-badge th">Threads</span>
     </div>
     <div class="hero-badges">
       <div class="hero-badge">
@@ -412,14 +505,14 @@ footer {
       </div>
       <div class="hero-badge">
         <span class="hero-badge-icon">&#x1f6e1;&#xfe0f;</span>
-        <span data-i18n="badgeSafe">Smart delays &mdash; your account stays safe</span>
+        <span data-i18n="badgeSafe">Real browser session &mdash; undetectable</span>
       </div>
     </div>
     <h1 class="hero-title">
       <span data-i18n="heroTitle">Non-mutual follows?<br><span class='hero-title-hl'>Auto unfollow, safely.</span></span>
     </h1>
     <p class="hero-desc" data-i18n="heroDesc">
-      Automatically find accounts that don't follow you back on Instagram and Threads, and safely unfollow them with smart delays.<br><strong style="color:var(--text)">No login required. No data collection. 100% local &mdash; everything runs in your browser.</strong>
+      Automatically find accounts that don't follow you back on Instagram, and safely unfollow them with human-like behavior patterns.<br><strong style="color:var(--text)">No login required. No data collection. Your real browser session does the work &mdash; Instagram can't tell it apart from you.</strong>
     </p>
     <div class="hero-btns">
       <a href="https://chromewebstore.google.com/detail/instagramthreads-safe-aut/jenhdcakdaehdheimfgmoklhhklealfo?authuser=0&hl=ko" class="btn-hero btn-hero-fill" data-i18n="heroBtn1">Start with Chrome Extension &rarr;</a>
@@ -438,8 +531,8 @@ footer {
 <div class="trust-bar">
   <div class="trust-item"><span class="trust-icon">&#x1f512;</span> <span data-i18n="trust1">Zero data collection</span></div>
   <div class="trust-item"><span class="trust-icon">&#x1f4bb;</span> <span data-i18n="trust2">Runs in your browser only</span></div>
-  <div class="trust-item"><span class="trust-icon">&#x23f1;&#xfe0f;</span> <span data-i18n="trust3">Smart delays protect your account</span></div>
-  <div class="trust-item"><span class="trust-icon">&#x1f6e1;&#xfe0f;</span> <span data-i18n="trust4">Whitelist to skip important accounts</span></div>
+  <div class="trust-item"><span class="trust-icon">&#x1f9ec;</span> <span data-i18n="trust3">Same method as Instagram website</span></div>
+  <div class="trust-item"><span class="trust-icon">&#x1f6e1;&#xfe0f;</span> <span data-i18n="trust4">Human-like behavior patterns</span></div>
 </div>
 
 <div class="divider"></div>
@@ -449,23 +542,138 @@ footer {
   <div class="reveal">
     <div class="section-eyebrow" data-i18n="howEyebrow">HOW IT WORKS</div>
     <h2 class="section-title" data-i18n="howTitle">3 simple steps.</h2>
-    <p class="section-sub" data-i18n="howSub">No complicated setup. Anyone can start right away.</p>
+    <p class="section-sub" data-i18n="howSub">No complicated setup. No credentials required. Anyone can start right away.</p>
   </div>
   <div class="how-grid">
     <div class="how-card reveal" data-num="01">
       <div class="how-icon">&#x1f527;</div>
       <div class="how-title" data-i18n="how1Title">Install the extension</div>
-      <div class="how-desc" data-i18n="how1Desc">Install Instagram/Threads Safe Auto Unfollow from Chrome Web Store. Takes just 30 seconds.</div>
+      <div class="how-desc" data-i18n="how1Desc">Install Instagram Safe Auto Unfollow from Chrome Web Store. Takes just 30 seconds. No account info needed.</div>
     </div>
     <div class="how-card reveal d1" data-num="02">
       <div class="how-icon">&#x1f50d;</div>
-      <div class="how-title" data-i18n="how2Title">Scan &mdash; find non-mutuals instantly</div>
-      <div class="how-desc" data-i18n="how2Desc">Open Instagram or Threads, hit Scan. The extension automatically finds everyone who doesn't follow you back.</div>
+      <div class="how-title" data-i18n="how2Title">Scan &mdash; find non-mutuals in real time</div>
+      <div class="how-desc" data-i18n="how2Desc">Open Instagram, hit Scan. The extension checks Instagram in real time &mdash; the same way your browser does &mdash; to find who doesn't follow you back. No outdated data files.</div>
     </div>
     <div class="how-card reveal d2" data-num="03">
       <div class="how-icon">&#x2705;</div>
       <div class="how-title" data-i18n="how3Title">Select &amp; auto unfollow safely</div>
-      <div class="how-desc" data-i18n="how3Desc">Pick accounts to unfollow (or select all with Pro). The extension unfollows them automatically with smart delays to keep your account safe.</div>
+      <div class="how-desc" data-i18n="how3Desc">Pick accounts to unfollow (or select all with Pro). The extension unfollows them one by one with randomized delays, mimicking real human behavior.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SAFETY TECHNOLOGY -->
+<section class="safety-section" id="safety">
+  <div class="reveal">
+    <div class="section-eyebrow" data-i18n="safetyEyebrow">SAFETY TECHNOLOGY</div>
+    <h2 class="section-title" data-i18n="safetyTitle">Engineered to be invisible.</h2>
+    <p class="section-sub" data-i18n="safetySub">Every detail is designed so Instagram's bot detection sees a normal user &mdash; not an automation tool.</p>
+  </div>
+  <div class="safety-grid">
+    <div class="safety-card reveal">
+      <div class="safety-card-header">
+        <div class="safety-icon-wrap">&#x1f310;</div>
+        <div class="safety-card-title" data-i18n="s1Title">Real Browser Session</div>
+      </div>
+      <div class="safety-card-desc" data-i18n="s1Desc">We use your actual logged-in browser session directly. Requests come from <em>your</em> browser &mdash; not a third-party bot server. Instagram sees your real cookies, your real login. To Instagram, it looks exactly like you scrolling through your feed normally.</div>
+      <span class="safety-card-tag" data-i18n="s1Tag">NO LOGIN REQUIRED</span>
+    </div>
+    <div class="safety-card reveal d1">
+      <div class="safety-card-header">
+        <div class="safety-icon-wrap">&#x1f9ec;</div>
+        <div class="safety-card-title" data-i18n="s2Title">Same Connection Method as Instagram</div>
+      </div>
+      <div class="safety-card-desc" data-i18n="s2Desc">Other tools use a mobile-app connection method from a desktop browser &mdash; an obvious red flag for bot detection. We use the exact same connection method that Instagram's own website uses when you scroll your following list. Even the internal connection codes are automatically extracted from Instagram's latest updates, so we always stay perfectly in sync.</div>
+      <span class="safety-card-tag" data-i18n="s2Tag">SAME AS REAL BROWSER</span>
+    </div>
+    <div class="safety-card reveal">
+      <div class="safety-card-header">
+        <div class="safety-icon-wrap">&#x1f9d1;&#x200d;&#x1f4bb;</div>
+        <div class="safety-card-title" data-i18n="s3Title">Human-Like Scan Patterns</div>
+      </div>
+      <div class="safety-card-desc" data-i18n="s3Desc">We don't bulk-fetch thousands of accounts at once. Random delays between pages mimic natural reading speed. Periodic longer pauses simulate you tapping on a profile to check it out.</div>
+      <span class="safety-card-tag" data-i18n="s3Tag">MATCHES REAL SCROLL SPEED</span>
+    </div>
+    <div class="safety-card reveal d1">
+      <div class="safety-card-header">
+        <div class="safety-icon-wrap">&#x23f1;&#xfe0f;</div>
+        <div class="safety-card-title" data-i18n="s4Title">Smart Unfollow Timing</div>
+      </div>
+      <div class="safety-card-desc" data-i18n="s4Desc">Each unfollow has a randomized delay (30&ndash;60s default). After a batch (15&ndash;20 accounts), a longer cooldown (5&ndash;10 min) kicks in. No fixed intervals &mdash; every timing value is randomized within a range to prevent pattern detection. Pro users can customize all these values.</div>
+      <span class="safety-card-tag" data-i18n="s4Tag">DYNAMIC DELAYS</span>
+    </div>
+    <div class="safety-card reveal">
+      <div class="safety-card-header">
+        <div class="safety-icon-wrap">&#x1f4c5;</div>
+        <div class="safety-card-title" data-i18n="s5Title">Daily Safety Limits</div>
+      </div>
+      <div class="safety-card-desc" data-i18n="s5Desc">Even with Pro, unfollows are capped at 100&ndash;150 per day (randomized each day). This number is based on our analysis of thousands of account restriction cases. The randomized cap itself prevents pattern detection across days.</div>
+      <span class="safety-card-tag" data-i18n="s5Tag">100&ndash;150 / DAY</span>
+    </div>
+    <div class="safety-card reveal d1">
+      <div class="safety-card-header">
+        <div class="safety-icon-wrap">&#x1f504;</div>
+        <div class="safety-card-title" data-i18n="s6Title">Real-Time Mutual Check</div>
+      </div>
+      <div class="safety-card-desc" data-i18n="s6Desc">We don't rely on exported data files or cached follower lists. Every scan checks Instagram in real time, verifying whether each account follows you back as we scroll. Results are always accurate &mdash; not days old.</div>
+      <span class="safety-card-tag" data-i18n="s6Tag">ALWAYS UP-TO-DATE</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="compare-section">
+  <div class="reveal" style="text-align:center">
+    <div class="section-eyebrow" data-i18n="compareEyebrow">WHY US</div>
+    <h2 class="section-title" data-i18n="compareTitle">Not all unfollow tools are equal.</h2>
+    <p class="section-sub" style="margin:0 auto" data-i18n="compareSub">Most tools cut corners that put your account at risk. We don't.</p>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-card others reveal">
+      <div class="compare-label" data-i18n="compareOthers">OTHER TOOLS</div>
+      <ul class="compare-list">
+        <li data-i18n="co1">Use mobile-app method from desktop &mdash; flagged as suspicious</li>
+        <li data-i18n="co2">Internal codes break every few weeks with updates</li>
+        <li data-i18n="co3">Bulk-fetch thousands of accounts instantly</li>
+        <li data-i18n="co4">Fixed intervals between unfollows &mdash; easy for Instagram to detect</li>
+        <li data-i18n="co5">Rely on exported data files &mdash; outdated results</li>
+        <li data-i18n="co6">Require your login info or access tokens</li>
+      </ul>
+    </div>
+    <div class="compare-card ours reveal d1">
+      <div class="compare-label" data-i18n="compareOurs">SAFE AUTO UNFOLLOW</div>
+      <ul class="compare-list">
+        <li data-i18n="cu1">Same connection method as Instagram's own website</li>
+        <li data-i18n="cu2">Auto-adapts to Instagram updates &mdash; never breaks</li>
+        <li data-i18n="cu3">Small page sizes &mdash; matches real scroll behavior</li>
+        <li data-i18n="cu4">Every delay is randomized within a range</li>
+        <li data-i18n="cu5">Real-time live checks &mdash; always accurate</li>
+        <li data-i18n="cu6">Zero login info &mdash; uses your existing browser session</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TRADE-OFF: SLOW = SAFE -->
+<section class="tradeoff-section">
+  <div class="tradeoff-wrap reveal">
+    <div class="tradeoff-icon">&#x2615;</div>
+    <div class="tradeoff-title" data-i18n="tradeoffTitle">Slow by design.</div>
+    <div class="tradeoff-desc" data-i18n="tradeoffDesc">Yes, we're slower than other tools. That's the whole point. Every second of delay is there to keep your account safe.</div>
+    <div class="tradeoff-items">
+      <div class="tradeoff-item">
+        <div class="tradeoff-item-label" data-i18n="to1Label">&#x23f3; Scanning takes time</div>
+        <div class="tradeoff-item-text" data-i18n="to1Text">We check mutual status <em>during</em> the scan in real time &mdash; not from a pre-downloaded list. This means scanning is slower, but results are <strong>always accurate and up-to-date</strong>.</div>
+      </div>
+      <div class="tradeoff-item">
+        <div class="tradeoff-item-label" data-i18n="to2Label">&#x23f3; Unfollowing is gradual</div>
+        <div class="tradeoff-item-text" data-i18n="to2Text">30&ndash;60 second delays between each unfollow. Cooldown pauses every 15&ndash;20 accounts. It's slow &mdash; but <strong>your account stays safe</strong>. Start it, grab a coffee, come back to a cleaner feed.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -477,38 +685,39 @@ footer {
   <div class="reveal">
     <div class="section-eyebrow" data-i18n="featEyebrow">FEATURES</div>
     <h2 class="section-title" data-i18n="featTitle">Everything you need.</h2>
-    <p class="section-sub" data-i18n="featSub">Auto-unfollow non-mutual accounts on Instagram and Threads &mdash; safely and effortlessly.</p>
+    <p class="section-sub" data-i18n="featSub">Auto-unfollow non-mutual accounts on Instagram &mdash; safely and effortlessly.</p>
   </div>
   <div class="feat-grid">
     <div class="feat-card reveal">
       <div class="feat-icon">&#x1f512;</div>
       <div class="feat-title" data-i18n="f1Title">100% Local &amp; Private</div>
-      <div class="feat-desc" data-i18n="f1Desc">No login required. No data sent to any server. Everything runs entirely in your browser. Your credentials stay yours.</div>
+      <div class="feat-desc" data-i18n="f1Desc">No login required. No data sent to any server. Everything runs entirely in your browser using your existing session. Your credentials never leave your device.</div>
     </div>
     <div class="feat-card reveal d1">
-      <div class="feat-icon">&#x1f6e1;&#xfe0f;</div>
-      <div class="feat-title" data-i18n="f2Title">Smart Delays &amp; Safety</div>
-      <div class="feat-desc" data-i18n="f2Desc">Randomized delays between unfollows, batch cooldowns, and rate-limit detection. Your account stays safe while unfollowing runs automatically.</div>
+      <div class="feat-icon">&#x1f4f0;</div>
+      <div class="feat-title" data-i18n="f2Title">Real-Time Live Scanning</div>
+      <div class="feat-desc" data-i18n="f2Desc">No data file imports. No cached data. Every scan checks Instagram in real time to verify mutual status, so you always see the most accurate results.</div>
     </div>
     <div class="feat-card reveal d2">
-      <div class="feat-icon">&#x1f4f1;</div>
-      <div class="feat-title" data-i18n="f3Title">Instagram + Threads</div>
-      <div class="feat-desc" data-i18n="f3Desc">Switch between platforms with a single click. Manage both accounts from one extension with separate settings for each.</div>
+      <div class="feat-icon">&#x1f4cb;</div>
+      <div class="feat-title" data-i18n="f3Title">Whitelist Protection</div>
+      <div class="feat-desc" data-i18n="f3Desc">Add accounts to your whitelist and they'll never be unfollowed. Perfect for friends, family, or favorite creators you want to keep following.</div>
     </div>
     <div class="feat-card reveal">
-      <div class="feat-icon">&#x1f4cb;</div>
-      <div class="feat-title" data-i18n="f4Title">Whitelist &mdash; Protect Who Matters</div>
-      <div class="feat-desc" data-i18n="f4Desc">Add accounts to your whitelist and they'll never be unfollowed. Perfect for friends, family, or favorite creators.</div>
+      <div class="feat-icon">&#x1f4ca;</div>
+      <div class="feat-title" data-i18n="f4Title">Real-time Stats</div>
+      <div class="feat-desc" data-i18n="f4Desc">See your following, followers, and non-mutual count at a glance. Track unfollow results with detailed success/fail breakdowns.</div>
     </div>
     <div class="feat-card reveal d1">
-      <div class="feat-icon">&#x1f4ca;</div>
-      <div class="feat-title" data-i18n="f5Title">Real-time Stats</div>
-      <div class="feat-desc" data-i18n="f5Desc">See your following, followers, and non-mutual count at a glance. Track results with success/fail details.</div>
+      <div class="feat-icon">&#x2699;&#xfe0f;</div>
+      <div class="feat-title" data-i18n="f5Title">Customizable Speed</div>
+      <div class="feat-desc" data-i18n="f5Desc">Pro users can fine-tune delay ranges, batch sizes, and cooldown timers. Want to go a bit faster? Adjust the settings. Safety floors prevent dangerously low values.</div>
+      <span class="feat-badge">PRO</span>
     </div>
     <div class="feat-card reveal d2">
       <div class="feat-icon">&#x267e;&#xfe0f;</div>
       <div class="feat-title" data-i18n="f6Title">Unlimited Unfollows</div>
-      <div class="feat-desc" data-i18n="f6Desc">Free plan: 10 unfollows/day. Upgrade to Pro for unlimited unfollows, select all, and full list access.</div>
+      <div class="feat-desc" data-i18n="f6Desc">Free plan: 10 unfollows/day. Upgrade to Pro for unlimited unfollows, select all, and full list access. Daily safety cap (100&ndash;150) still applies to protect your account.</div>
       <span class="feat-badge">PRO</span>
     </div>
   </div>
@@ -521,7 +730,7 @@ footer {
   <div class="reveal" style="text-align:center">
     <div class="section-eyebrow" data-i18n="priceEyebrow">PRICING</div>
     <h2 class="section-title" data-i18n="priceTitle">Less than a cup of coffee.</h2>
-    <p class="section-sub" style="margin:0 auto" data-i18n="priceSub">Save hours of manual work. No hidden fees.</p>
+    <p class="section-sub" style="margin:0 auto" data-i18n="priceSub">Save hours of manual work.</p>
   </div>
   <div class="price-grid">
     <div class="price-card reveal">
@@ -550,7 +759,7 @@ footer {
         <li class="y" data-i18n="pp2">Unlimited unfollows</li>
         <li class="y" data-i18n="pp3">Select all / batch select</li>
         <li class="y" data-i18n="pp4">Whitelist management</li>
-        <li class="y" data-i18n="pp5">Real-time stats</li>
+        <li class="y" data-i18n="pp5">Customizable speed settings</li>
         <li class="y" data-i18n="pp6">Unfollow result details</li>
       </ul>
       <a href="https://chromewebstore.google.com/detail/instagramthreads-safe-aut/jenhdcakdaehdheimfgmoklhhklealfo?authuser=0&hl=ko" class="btn-price pro" id="proCta" data-i18n="priceProBtn">Start Pro &rarr;</a>
@@ -570,27 +779,31 @@ footer {
   <div class="faq-list">
     <div class="faq-item reveal">
       <div class="faq-q"><span data-i18n="fq1">Is my account safe?</span> <span class="faq-toggle">+</span></div>
-      <div class="faq-a" data-i18n="fa1">Yes. Everything runs locally in your browser. No data is sent to any external server. We don't store or access your login credentials.</div>
+      <div class="faq-a" data-i18n="fa1">Yes. Everything runs locally in your browser using your existing session. No data is sent to any external server. We use the same connection method that Instagram's own website uses, with human-like timing patterns. Instagram's bot detection sees normal user activity.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q"><span data-i18n="fq2">What are the free plan limits?</span> <span class="faq-toggle">+</span></div>
-      <div class="faq-a" data-i18n="fa2">Free plan allows 10 unfollows per day. Scanning is unlimited. Upgrade to Pro for unlimited unfollows and full list access.</div>
+      <div class="faq-q"><span data-i18n="fq2">Why is the scanning / unfollowing slow?</span> <span class="faq-toggle">+</span></div>
+      <div class="faq-a" data-i18n="fa2">By design. Scanning checks mutual status in real time (not a pre-downloaded list), which takes time but gives accurate results. Unfollowing uses randomized delays (30&ndash;60s) and batch cooldowns to mimic human behavior. This is what keeps your account safe from bot detection.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q"><span data-i18n="fq3">How do I activate Pro?</span> <span class="faq-toggle">+</span></div>
-      <div class="faq-a" data-i18n="fa3">After purchase, you'll receive a license key via email. Click "Already have a Pro key?" at the bottom of the extension and enter your key to activate.</div>
+      <div class="faq-q"><span data-i18n="fq3">Do I need to provide my login credentials?</span> <span class="faq-toggle">+</span></div>
+      <div class="faq-a" data-i18n="fa3">No. The extension uses your existing browser session (the one you're already logged into Instagram with). We never ask for, store, or transmit your username or password. This is also why bot detection can't distinguish our requests from yours &mdash; they <em>are</em> yours.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q"><span data-i18n="fq4">Will the other person know I removed them?</span> <span class="faq-toggle">+</span></div>
-      <div class="faq-a" data-i18n="fa4">No. Neither Instagram nor Threads send notifications when you stop following someone. The other person won't know unless they check manually.</div>
+      <div class="faq-q"><span data-i18n="fq4">What are the free plan limits?</span> <span class="faq-toggle">+</span></div>
+      <div class="faq-a" data-i18n="fa4">Free plan allows 10 unfollows per day. Scanning is unlimited. Upgrade to Pro for unlimited unfollows, select all, and customizable speed settings. Even Pro has a daily safety cap of 100&ndash;150 to protect your account.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q"><span data-i18n="fq5">How do I cancel my subscription?</span> <span class="faq-toggle">+</span></div>
-      <div class="faq-a" data-i18n="fa5">You can cancel anytime from your Gumroad subscription page (gumroad.com/subscriptions). After cancellation, you'll keep Pro until the current period ends, then switch to the free plan.</div>
+      <div class="faq-q"><span data-i18n="fq5">Will the other person know I unfollowed them?</span> <span class="faq-toggle">+</span></div>
+      <div class="faq-a" data-i18n="fa5">No. Instagram does not send notifications when you unfollow someone. The other person won't know unless they manually check their followers list.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q"><span data-i18n="fq6">Does it work on both Instagram and Threads?</span> <span class="faq-toggle">+</span></div>
-      <div class="faq-a" data-i18n="fa6">Yes! You can switch between Instagram and Threads with one click using the platform tabs. Each platform has separate settings and data.</div>
+      <div class="faq-q"><span data-i18n="fq6">How do I activate Pro?</span> <span class="faq-toggle">+</span></div>
+      <div class="faq-a" data-i18n="fa6">After purchase, you'll receive a license key via email. Click "Already have a Pro key?" at the bottom of the extension and enter your key to activate instantly.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q"><span data-i18n="fq7">How do I cancel my subscription?</span> <span class="faq-toggle">+</span></div>
+      <div class="faq-a" data-i18n="fa7">You can cancel anytime from your Gumroad subscription page (gumroad.com/subscriptions). After cancellation, you'll keep Pro until the current period ends, then switch to the free plan.</div>
     </div>
   </div>
 </section>
@@ -599,7 +812,7 @@ footer {
 <section class="cta-section">
   <div class="cta-orb"></div>
   <h2 class="cta-title reveal"><span data-i18n="ctaTitle">Done unfollowing manually?<br><span style='background:linear-gradient(135deg,var(--purple2),var(--purple3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text'>Let us do it safely for you.</span></span></h2>
-  <p class="cta-desc reveal" data-i18n="ctaDesc">Auto-unfollow non-mutual accounts while smart delays keep your account safe.</p>
+  <p class="cta-desc reveal" data-i18n="ctaDesc">Real browser sessions. Human-like timing. Your account stays safe while we clean up your feed.</p>
   <div class="cta-btns reveal">
     <a href="https://chromewebstore.google.com/detail/instagramthreads-safe-aut/jenhdcakdaehdheimfgmoklhhklealfo?authuser=0&hl=ko" class="btn-hero btn-hero-fill" data-i18n="ctaBtn">Install Extension &mdash; Start Now</a>
   </div>
@@ -608,24 +821,9 @@ footer {
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-top">
-    <div class="footer-logo">
-      <img class="footer-logo-icon" src="app-icon.png" alt="logo">
-      Instagram/Threads Safe Auto Unfollow
-    </div>
-    <div class="footer-links">
-      <a href="privacy.html" data-i18n="footPrivacy">Privacy Policy</a>
-      <a href="terms.html" data-i18n="footTerms">Terms of Service</a>
-      <a href="refund.html" data-i18n="footRefund">Refund Policy</a>
-      <a href="mailto:simmim1768@gmail.com" data-i18n="footContact">Contact</a>
-    </div>
-  </div>
-  <div class="footer-copy">&copy; 2026 Instagram/Threads Safe Auto Unfollow. All rights reserved.</div>
-  <div class="footer-biz">
-    <span>사업자등록번호: 287-31-01764</span><span>|</span>
-    <span>상호: 쪽집게</span><span>|</span>
-    <span>대표: 신민석</span><br>
-    <span>주소: 경기도 안산시 상록구 오목로11길 5, 4층 401호(본오동)</span>
+  <div class="footer-copy">&copy; 2026 Instagram Safe Auto Unfollow. All rights reserved.</div>
+  <div style="margin-top:8px;">
+    <a href="mailto:simmim1768@gmail.com" style="font-size:13px; color:var(--muted); text-decoration:none;">simmim1768@gmail.com</a>
   </div>
 </footer>
 
@@ -634,48 +832,93 @@ footer {
 const i18n = {
   en: {},
   ko: {
-    navName: 'Instagram/Threads Safe Auto Unfollow',
+    navName: 'Instagram Safe Auto Unfollow',
     navHow: '사용법',
+    navSafety: '안전 기술',
     navFeatures: '기능',
     navPricing: '가격',
     navCta: '확장프로그램 설치',
     badgeLocal: '로그인 불필요 — 100% 로컬 동작',
-    badgeSafe: '\uC2A4\uB9C8\uD2B8 \uB51C\uB808\uC774 \u2014 \uACC4\uC815\uC774 \uC548\uC804\uD558\uAC8C \uBCF4\uD638\uB429\uB2C8\uB2E4',
+    badgeSafe: '실제 브라우저 세션 — 탐지 불가',
     heroTitle: "맞팔 안 하는 계정?<br><span class='hero-title-hl'>자동으로 안전하게 언팔.</span>",
-    heroDesc: '인스타그램과 스레드에서 나를 팔로우하지 않는 계정을 자동으로 찾아 안전하게 언팔합니다. 스마트 딜레이가 계정을 보호하면서 자동 실행.<br><strong style="color:var(--text)">로그인 필요 없음. 데이터 수집 없음. 100% 로컬 — 모든 것이 브라우저 안에서 처리됩니다.</strong>',
+    heroDesc: 'Instagram에서 나를 팔로우하지 않는 계정을 자동으로 찾아, 실제 사람처럼 행동하며 안전하게 언팔합니다.<br><strong style="color:var(--text)">로그인 불필요. 데이터 수집 없음. 실제 브라우저 세션이 동작하기 때문에 — Instagram이 사용자와 구분할 수 없습니다.</strong>',
     heroBtn1: 'Chrome 확장프로그램으로 시작하기 →',
     heroSub: 'Chrome 확장프로그램 · 하루 10회 무료 언팔 · 100% 브라우저 기반',
     trust1: '데이터 수집 제로',
     trust2: '브라우저에서만 동작',
-    trust3: '스마트 딜레이로 계정 보호',
-    trust4: '\uD654\uC774\uD2B8\uB9AC\uC2A4\uD2B8\uB85C \uC911\uC694 \uACC4\uC815 \uBCF4\uD638',
+    trust3: 'Instagram 웹사이트와 동일한 방식 사용',
+    trust4: '실제 사람과 동일한 행동 패턴',
     howEyebrow: '사용 방법',
     howTitle: '3단계면 끝.',
-    howSub: '복잡한 설정 없이, 누구나 바로 시작할 수 있어요.',
+    howSub: '복잡한 설정 없이, 계정 정보 입력 없이, 누구나 바로 시작할 수 있어요.',
     how1Title: '확장프로그램 설치',
-    how1Desc: 'Chrome \uC6F9\uC2A4\uD1A0\uC5B4\uC5D0\uC11C Instagram/Threads Safe Auto Unfollow\uB97C \uC124\uCE58\uD558\uC138\uC694. 30\uCD08\uBA74 \uC644\uB8CC.',
-    how2Title: '스캔 — 맞팔 안 하는 계정 즉시 발견',
-    how2Desc: 'Instagram이나 Threads에 접속 후 스캔 버튼 한 번이면, 나를 팔로우하지 않는 계정을 자동으로 찾아줍니다.',
-    how3Title: '선택 후 자동 언팔',
-    how3Desc: '언팔할 계정을 선택하세요 (Pro는 전체 선택 가능). 스마트 딜레이로 계정을 보호하면서 자동으로 언팔합니다.',
+    how1Desc: 'Chrome 웹스토어에서 Instagram Safe Auto Unfollow를 설치하세요. 30초면 완료. 계정 정보 입력 불필요.',
+    how2Title: '스캔 — 실시간으로 비맞팔 발견',
+    how2Desc: 'Instagram에 접속 후 스캔 버튼 한 번. Instagram 웹사이트가 사용하는 것과 동일한 방식으로 실시간 조회합니다. 오래된 데이터 파일에 의존하지 않습니다.',
+    how3Title: '선택 후 자동 안전 언팔',
+    how3Desc: '언팔할 계정을 선택하세요 (Pro는 전체 선택 가능). 랜덤 딜레이로 실제 사람처럼 한 명씩 자동 언팔합니다.',
+    safetyEyebrow: '안전 기술',
+    safetyTitle: '보이지 않도록 설계했습니다.',
+    safetySub: 'Instagram의 봇 감지 시스템이 일반 사용자로 인식하도록 — 모든 디테일이 설계되었습니다.',
+    s1Title: '실제 브라우저 세션',
+    s1Desc: '이미 로그인된 브라우저 세션을 그대로 사용합니다. 외부 봇 서버가 아닌 <em>사용자 본인의</em> 브라우저에서 직접 요청이 발생합니다. Instagram은 실제 쿠키, 실제 로그인 정보를 봅니다. 피드를 스크롤하는 것과 구분할 수 없습니다.',
+    s1Tag: '로그인 불필요',
+    s2Title: 'Instagram 웹과 동일한 접속 방식',
+    s2Desc: '다른 도구들은 PC에서 모바일 앱용 접속 방식을 사용합니다 — 봇 탐지에 명백한 경고 신호입니다. 저희는 Instagram 웹사이트가 팔로잉 목록을 스크롤할 때 사용하는 것과 완전히 동일한 방식을 사용합니다. 내부 접속 코드도 Instagram 최신 업데이트에서 자동으로 추출하여 항상 최신 상태를 유지합니다.',
+    s2Tag: '실제 브라우저와 동일',
+    s3Title: '사람과 동일한 스캔 패턴',
+    s3Desc: '한 번에 수천 개의 계정을 벌크 조회하지 않습니다. 페이지 사이에 랜덤 딜레이로 자연스러운 읽기 속도를 모방합니다. 주기적으로 더 긴 멈춤도 넣어 프로필을 확인하는 것처럼 시뮬레이션합니다.',
+    s3Tag: '실제 스크롤 속도와 일치',
+    s4Title: '스마트 언팔 타이밍',
+    s4Desc: '각 언팔 사이에 랜덤 딜레이 (기본 30~60초). 배치 (15~20명) 후에는 더 긴 쿨다운 (5~10분)이 적용됩니다. 고정 간격 없이 — 모든 타이밍이 범위 내에서 랜덤화되어 패턴 감지를 방지합니다. Pro 사용자는 모든 값을 커스터마이징할 수 있습니다.',
+    s4Tag: '동적 딜레이',
+    s5Title: '일일 안전 한도',
+    s5Desc: 'Pro에서도 하루 100~150회로 제한됩니다 (매일 랜덤). 수천 건의 계정 제재 사례를 분석한 결과에 기반한 수치입니다. 랜덤화된 한도 자체도 날짜별 패턴 감지를 방지합니다.',
+    s5Tag: '100~150 / 일',
+    s6Title: '실시간 맞팔 확인',
+    s6Desc: '내보낸 데이터 파일이나 캐시된 팔로워 목록에 의존하지 않습니다. 매 스캔마다 Instagram을 실시간으로 조회하며, 스크롤하면서 각 유저가 나를 팔로우하는지 하나하나 확인합니다. 결과는 항상 정확합니다 — 며칠 전 데이터가 아닙니다.',
+    s6Tag: '항상 최신 데이터',
+    compareEyebrow: '차별점',
+    compareTitle: '모든 언팔 도구가 같지 않습니다.',
+    compareSub: '대부분의 도구는 계정 안전을 위협하는 방식을 사용합니다. 저희는 다릅니다.',
+    compareOthers: '다른 도구',
+    compareOurs: 'SAFE AUTO UNFOLLOW',
+    co1: 'PC에서 모바일 앱 방식 사용 — 의심 대상',
+    co2: '내부 코드가 업데이트마다 깨짐',
+    co3: '수천 개 계정을 한번에 벌크 조회',
+    co4: '고정된 언팔 간격 — Instagram이 쉽게 감지',
+    co5: '내보낸 데이터 파일에 의존 — 오래된 결과',
+    co6: '로그인 정보 또는 접근 토큰 입력 요구',
+    cu1: 'Instagram 웹사이트와 완전히 동일한 접속 방식',
+    cu2: 'Instagram 업데이트에 자동 대응 — 절대 안 깨짐',
+    cu3: '소량 페이지 단위 조회 — 실제 스크롤과 일치',
+    cu4: '모든 딜레이가 범위 내에서 랜덤화',
+    cu5: '실시간 라이브 확인 — 항상 정확',
+    cu6: '로그인 정보 제로 — 기존 브라우저 세션 사용',
+    tradeoffTitle: '느린 건 의도입니다.',
+    tradeoffDesc: '네, 다른 도구보다 느립니다. 그게 핵심이에요. 모든 딜레이는 당신의 계정을 안전하게 지키기 위해 존재합니다.',
+    to1Label: '⏳ 스캔에 시간이 걸립니다',
+    to1Text: '미리 다운로드한 목록이 아닌, 실시간으로 맞팔 여부를 <em>스캔 중에</em> 직접 확인합니다. 느리지만 결과는 <strong>항상 정확하고 최신 상태</strong>입니다.',
+    to2Label: '⏳ 언팔은 점진적입니다',
+    to2Text: '각 언팔 사이 30~60초 딜레이. 15~20명마다 쿨다운 휴식. 느리지만 — <strong>계정은 안전합니다</strong>. 실행하고, 커피 한 잔 마시고, 돌아오면 깔끔한 피드가 기다립니다.',
     featEyebrow: '기능',
     featTitle: '필요한 건 다 있어요.',
-    featSub: 'Instagram과 Threads에서 맞팔 아닌 계정을 자동으로 안전하게 언팔하세요.',
+    featSub: 'Instagram에서 맞팔 아닌 계정을 자동으로 안전하게 언팔하세요.',
     f1Title: '100% 로컬 & 프라이빗',
-    f1Desc: '로그인 불필요. 외부 서버로 데이터 전송 없음. 모든 것이 브라우저 안에서만 처리됩니다. 비밀번호는 항상 당신만의 것.',
-    f2Title: '스마트 딜레이 & 안전장치',
-    f2Desc: '언팔 사이 랜덤 딜레이, 배치 쿨다운, 속도 제한 감지. 자동 언팔 중에도 계정이 안전하게 보호됩니다.',
-    f3Title: 'Instagram + Threads',
-    f3Desc: '클릭 한 번으로 플랫폼 전환. 하나의 확장프로그램에서 두 계정을 각각의 설정으로 관리하세요.',
-    f4Title: '화이트리스트 — 소중한 계정 보호',
-    f4Desc: '화이트리스트에 추가한 계정은 절대 언팔되지 않습니다. 친구, 가족, 좋아하는 크리에이터를 보호하세요.',
-    f5Title: '실시간 통계',
-    f5Desc: '\uD314\uB85C\uC789, \uD314\uB85C\uC6CC, \uB9DE\uD314 \uC544\uB2CC \uACC4\uC815 \uC218\uB97C \uD55C\uB208\uC5D0 \uD655\uC778. \uC5B8\uD314 \uACB0\uACFC\uB3C4 \uC131\uACF5/\uC2E4\uD328 \uC0C1\uC138 \uB0B4\uC5ED\uC73C\uB85C \uD655\uC778\uD560 \uC218 \uC788\uC5B4\uC694.',
+    f1Desc: '로그인 불필요. 외부 서버로 데이터 전송 없음. 기존 세션을 사용해 브라우저 안에서만 처리됩니다. 비밀번호는 절대 기기를 떠나지 않습니다.',
+    f2Title: '실시간 라이브 스캔',
+    f2Desc: '데이터 파일 가져오기 없음. 캐시된 데이터 없음. 매 스캔마다 Instagram을 실시간으로 조회하여 맞팔 여부를 확인하므로 항상 최신 결과를 제공합니다.',
+    f3Title: '화이트리스트 보호',
+    f3Desc: '화이트리스트에 추가한 계정은 절대 언팔되지 않습니다. 친구, 가족, 좋아하는 크리에이터를 보호하세요.',
+    f4Title: '실시간 통계',
+    f4Desc: '팔로잉, 팔로워, 맞팔 아닌 계정 수를 한눈에 확인. 언팔 결과도 성공/실패 상세 내역으로 확인할 수 있어요.',
+    f5Title: '커스터마이징 속도',
+    f5Desc: 'Pro 사용자는 딜레이 범위, 배치 크기, 쿨다운 타이머를 세밀하게 조정할 수 있습니다. 안전 하한선이 위험한 수치를 방지합니다.',
     f6Title: '무제한 언팔',
-    f6Desc: '무료 플랜은 하루 10회 언팔 가능. Pro로 업그레이드하면 무제한 언팔과 전체 목록 조회가 가능합니다.',
+    f6Desc: '무료 플랜은 하루 10회 언팔. Pro로 업그레이드하면 무제한 언팔, 전체 선택, 전체 목록 조회가 가능합니다. 계정 보호를 위해 일일 안전 한도(100~150)는 유지됩니다.',
     priceEyebrow: '가격',
     priceTitle: '커피 한 잔보다 저렴해요.',
-    priceSub: '수동으로 한 명씩 언팔하는 시간을 절약하세요. 숨겨진 비용 없음.',
+    priceSub: '수동으로 한 명씩 언팔하는 시간을 절약하세요.',
     priceProAmount: '$3.99',
     priceFreeP: '영원히 무료',
     pf1: '무제한 스캔',
@@ -691,26 +934,28 @@ const i18n = {
     pp2: '무제한 언팔',
     pp3: '전체 선택 / 일괄 선택',
     pp4: '화이트리스트 관리',
-    pp5: '실시간 통계',
+    pp5: '속도 커스터마이징',
     pp6: '언팔 결과 상세 내역',
     priceProBtn: 'Pro 시작하기 →',
     priceNotice: '결제 후 이메일로 Pro 라이선스 키가 전송됩니다.<br>잘못된 이메일로 키가 발급된 경우 <a href="mailto:simmim1768@gmail.com">simmim1768@gmail.com</a>으로 문의해주세요.',
     priceSave: '37% 절약',
     faqTitle: '자주 묻는 질문.',
     fq1: '내 계정이 안전한가요?',
-    fa1: '네. 모든 처리는 브라우저 안에서만 이루어지며, 어떤 데이터도 외부 서버로 전송되지 않아요. 스마트 딜레이가 계정을 보호합니다.',
-    fq2: '무료 버전의 제한은 무엇인가요?',
-    fa2: '무료 버전은 하루 10회까지 언팔할 수 있어요. 스캔은 무제한입니다. Pro로 업그레이드하면 무제한 언팔과 전체 목록 조회가 가능해요.',
-    fq3: 'Pro는 어떻게 활성화하나요?',
-    fa3: '결제 완료 후 이메일로 라이선스 키가 전송돼요. 확장프로그램 하단의 "Pro 키를 이미 갖고 계신가요?"를 클릭해 키를 입력하면 즉시 활성화됩니다.',
-    fq4: '언팔하면 상대방에게 알림이 가나요?',
-    fa4: '아니요. Instagram과 Threads 모두 언팔 알림을 보내지 않습니다. 상대방은 직접 확인하지 않는 이상 알 수 없어요.',
-    fq5: '구독 취소는 어떻게 하나요?',
-    fa5: 'Gumroad 구독 관리 페이지(gumroad.com/subscriptions)에서 언제든 취소할 수 있어요. 취소 후 현재 기간이 끝나면 자동으로 무료 플랜으로 전환됩니다.',
-    fq6: 'Instagram과 Threads 둘 다 지원하나요?',
-    fa6: '네! 플랫폼 탭으로 클릭 한 번에 전환할 수 있습니다. 각 플랫폼의 설정과 데이터는 별도로 관리됩니다.',
+    fa1: '네. 기존 브라우저 세션을 사용해 브라우저 안에서만 처리됩니다. 어떤 데이터도 외부 서버로 전송되지 않습니다. Instagram 웹사이트와 완전히 동일한 접속 방식을 사용하며, 사람과 같은 타이밍 패턴을 적용합니다. Instagram의 봇 감지는 정상 사용자 활동으로 인식합니다.',
+    fq2: '스캔 / 언팔이 왜 느린가요?',
+    fa2: '의도된 설계입니다. 스캔은 미리 다운로드한 목록이 아닌 실시간으로 맞팔 여부를 확인하므로 시간이 걸리지만 결과가 정확합니다. 언팔은 사람 행동을 모방하기 위해 랜덤 딜레이(30~60초)와 배치 쿨다운을 적용합니다. 이것이 봇 탐지로부터 계정을 안전하게 지키는 방법입니다.',
+    fq3: '로그인 정보를 입력해야 하나요?',
+    fa3: '아닙니다. 확장프로그램은 기존에 Instagram에 로그인된 브라우저 세션을 그대로 사용합니다. 아이디나 비밀번호를 묻거나 저장하거나 전송하지 않습니다. 봇 탐지가 구분할 수 없는 이유이기도 합니다 — 요청이 사용자 본인의 것이니까요.',
+    fq4: '무료 버전의 제한은 무엇인가요?',
+    fa4: '무료 버전은 하루 10회까지 언팔할 수 있어요. 스캔은 무제한입니다. Pro로 업그레이드하면 무제한 언팔, 전체 선택, 속도 커스터마이징이 가능합니다. Pro에서도 계정 보호를 위해 일일 안전 한도(100~150)는 유지됩니다.',
+    fq5: '언팔하면 상대방에게 알림이 가나요?',
+    fa5: '아니요. Instagram은 언팔 알림을 보내지 않습니다. 상대방은 직접 팔로워 목록을 확인하지 않는 이상 알 수 없어요.',
+    fq6: 'Pro는 어떻게 활성화하나요?',
+    fa6: '결제 완료 후 이메일로 라이선스 키가 전송돼요. 확장프로그램 하단의 "Pro 키를 이미 갖고 계신가요?"를 클릭해 키를 입력하면 즉시 활성화됩니다.',
+    fq7: '구독 취소는 어떻게 하나요?',
+    fa7: 'Gumroad 구독 관리 페이지(gumroad.com/subscriptions)에서 언제든 취소할 수 있어요. 취소 후 현재 기간이 끝나면 자동으로 무료 플랜으로 전환됩니다.',
     ctaTitle: "수동 언팔은 이제 그만.<br><span style='background:linear-gradient(135deg,var(--purple2),var(--purple3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text'>자동으로 안전하게 해드릴게요.</span>",
-    ctaDesc: '맞팔 아닌 계정을 스마트 딜레이로 안전하게 자동 언팔하세요.',
+    ctaDesc: '실제 브라우저 세션. 사람과 같은 타이밍. 피드를 정리하는 동안 계정은 안전합니다.',
     ctaBtn: '확장프로그램 설치 — 지금 시작하기',
     ctaSub: '30초 설치 · Chrome 전용 · 하루 10회 무료 언팔',
     footPrivacy: '개인정보처리방침',
